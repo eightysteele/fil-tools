@@ -92,6 +92,7 @@ func (d *DealModule) Close() {
 	}
 	close(d.close)
 	<-d.closed
+	d.stateClosed = true
 }
 
 func (d *DealModule) Store(ctx context.Context, addr address.Address, data io.Reader, dealConfigs []DealConfig, duration uint64) ([]cid.Cid, []DealConfig, error) {
