@@ -12,6 +12,7 @@ import (
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/textileio/filecoin/api/server"
 	"github.com/textileio/filecoin/tests"
+	_ "net/http/pprof"
 )
 
 var (
@@ -26,7 +27,9 @@ func main() {
 	logging.SetLogLevel("rpc", "error")
 	logging.SetLogLevel("dht", "error")
 	logging.SetLogLevel("swarm2", "error")
+
 	instrumentationSetup()
+	pprofSetup()
 
 	// ToDo: Flags for configuration
 
@@ -76,5 +79,11 @@ func instrumentationSetup() {
 		if err := http.ListenAndServe(":8888", mux); err != nil {
 			log.Fatalf("Failed to run Prometheus scrape endpoint: %v", err)
 		}
+	}()
+}
+
+func pprofSetup() {
+	go func() {
+		log.Error(http.ListenAndServe("localhost:6060", nil))
 	}()
 }
